@@ -1,0 +1,94 @@
+name: Crawl News and Deploy to GitHub Pages
+
+on:
+  # 每天早上8点运行
+  schedule:
+    - cron: '0 8 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+  # 每次推送时部署
+  push:
+    branches: [ main, master ]
+
+# 设置权限
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # 抓取新闻任务
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Crawl news
+        run: node crawler.js
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add data/articles.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update articles data [$(date '+%Y-%m-%d %H:%M')]" && git push)
+
+  # 部署到GitHub Pages
+  deploy:
+    needs: crawl
+    if: always()  # 即使crawl失败也尝试部署
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Crawl news (if not already done)
+        run: |
+          if [ ! -f data/articles.json ] || [ ! -s data/articles.json ]; then
+            node crawler.js
+          fi
+
+      - name: Prepare for deployment
+        run: |
+          # 确保数据文件存在
+          mkdir -p data
+          if [ ! -f data/articles.json ]; then
+            echo '[]' > data/articles.json
+          fi
+          # 复制数据到根目录供GitHub Pages直接访问
+          cp data/articles.json articles.json || true
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI行业动态追踪</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧菜单 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <span>AI追踪</span>
+            </div>
+            <nav class="menu">
+                <div class="menu-item active" data-view="today">
+                    <i class="fas fa-newspaper"></i>
+                    <span>最新动态</span>
+                </div>
+                <div class="menu-item" data-view="favorites">
+                    <i class="fas fa-star"></i>
+                    <span>我的收藏</span>
+                </div>
+                <div class="menu-item" data-view="all">
+                    <i class="fas fa-list"></i>
+                    <span>全部文章</span>
+                </div>
+                <div class="menu-item" data-view="sources">
+                    <i class="fas fa-rss"></i>
+                    <span>订阅源</span>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="last-update">
+                    <i class="fas fa-sync-alt"></i>
+                    <span id="lastUpdate">未更新</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 顶部栏 -->
+            <header class="header">
+                <h1 id="pageTitle">最新AI动态</h1>
+                <div class="header-actions">
+                    <button class="btn-refresh" onclick="refreshNews()">
+                        <i class="fas fa-sync-alt"></i> 立即刷新
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="搜索文章...">
+                        <button class="search-clear" id="searchClear" onclick="clearSearch()">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <div class="content">
+                <!-- 文章列表 -->
+                <div class="articles-container" id="articlesContainer">
+                    <!-- 文章卡片将动态生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 文章详情模态框 -->
+    <div class="modal" id="articleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <div class="modal-actions">
+                    <button class="btn-favorite" id="modalFavorite">
+                        <i class="far fa-star"></i>
+                    </button>
+                    <button class="btn-close" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-meta">
+                <span id="modalSource"><i class="fas fa-globe"></i> </span>
+                <span id="modalDate"><i class="fas fa-clock"></i> </span>
+                <span id="modalAuthor"><i class="fas fa-user"></i> </span>
+            </div>
+            <div class="modal-body">
+                <div class="content-label">内容摘要</div>
+                <p id="modalSummary"></p>
+                <div class="modal-tags" id="modalTags"></div>
+            </div>
+            <div class="modal-footer">
+                <a id="modalLink" href="#" target="_blank" class="btn-read-more">
+                    <i class="fas fa-external-link-alt"></i> 阅读原文
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订阅源管理模态框 -->
+    <div class="modal" id="sourcesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>管理订阅源</h2>
+                <button class="btn-close" onclick="closeSourcesModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="add-source">
+                    <input type="text" id="sourceName" placeholder="来源名称">
+                    <input type="url" id="sourceUrl" placeholder="RSS/API URL">
+                    <button onclick="addSource()">
+                        <i class="fas fa-plus"></i> 添加
+                    </button>
+                </div>
+                <div class="sources-list" id="sourcesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

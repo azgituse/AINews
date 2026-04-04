@@ -1,0 +1,26 @@
+{
+  "name": "ai-news-tracker",
+  "version": "1.0.0",
+  "description": "AI行业动态追踪系统",
+  "main": "app.js",
+  "scripts": {
+    "crawl": "node crawler.js",
+    "start": "node server.js",
+    "dev": "open index.html"
+  },
+  "keywords": [
+    "AI",
+    "news",
+    "tracker",
+    "news aggregator"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "rss-parser": "^3.13.0",
+    "cheerio": "^1.0.0-rc.12"
+  }
+}
